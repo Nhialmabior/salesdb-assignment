@@ -1,0 +1,80 @@
+-- =====================================================
+-- Week 8 Assignment: MySQL Database Backup and Restore
+-- =====================================================
+-- NOTE: mysqldump is a command-line program, not an SQL statement.
+-- Run these commands in a terminal (Git Bash, Command Prompt or the
+-- VS Code terminal), NOT in the MySQL editor. They are written as
+-- comments so this file can still be opened and saved as a .sql file.
+
+
+-- =====================================================
+-- Question 1: Creating a Complete Database Backup
+-- =====================================================
+-- Command:
+--
+--   mysqldump -u root -p sales > sales_backup.sql
+--
+-- Explanation:
+--   mysqldump       : MySQL utility that exports a database as SQL statements.
+--   -u root         : connect as the MySQL user "root".
+--   -p              : prompt for the password (the password is not typed
+--                     in the command, so it is not stored in shell history).
+--   sales           : the database to back up.
+--   > sales_backup.sql : redirect the output into the file sales_backup.sql.
+--
+-- The file contains the CREATE TABLE statements (structure) and the
+-- INSERT statements (data) needed to rebuild the sales database.
+--
+-- Why regular backups are important:
+--   Backups protect against data loss from hardware failure, accidental
+--   deletes or updates, software bugs, corruption, and cyber attacks.
+--   A backup taken before a major change lets you roll back if something
+--   goes wrong. Backups only help if they are taken regularly, stored
+--   safely, and tested by restoring them.
+--
+-- To restore later:
+--   mysql -u root -p sales < sales_backup.sql
+
+
+-- =====================================================
+-- Question 2: Backing Up All Databases
+-- =====================================================
+-- Command:
+--
+--   mysqldump -u root -p --all-databases > all_databases_backup.sql
+--
+-- Explanation:
+--   --all-databases : exports every database on the server (including the
+--                     sales database), with the statements to create each
+--                     database. The MySQL system databases (such as the
+--                     "mysql" database holding user accounts and privileges)
+--                     are included.
+--   -u root, -p     : connect as root and prompt for the password.
+--   > all_databases_backup.sql : save the output in this file.
+--
+-- Why backing up all databases is important before a server migration:
+--   A migration moves the whole server, not just one database. A full
+--   backup makes sure no database, table, user account or privilege is
+--   left behind. It also gives a safe copy to fall back on if the move
+--   fails, and lets the new server be rebuilt exactly like the old one.
+--
+-- To restore later:
+--   mysql -u root -p < all_databases_backup.sql
+
+
+-- =====================================================
+-- Question 3: Data-Only Backup (not shown in the assignment text;
+-- based on learning objective 4 "Generate data-only database backups")
+-- =====================================================
+-- Command:
+--
+--   mysqldump -u root -p --no-create-info sales > sales_data_backup.sql
+--
+-- Explanation:
+--   --no-create-info : leaves out the CREATE TABLE statements, so the file
+--                      contains only the INSERT statements (the data).
+--   The file is smaller and is useful when the table structure already
+--   exists on the target server and only the data needs to be copied.
+--
+-- To restore later (tables must already exist):
+--   mysql -u root -p sales < sales_data_backup.sql
